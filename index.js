@@ -94,7 +94,7 @@ async function monos_test(mono_num, capital, numTrades, rr, riesgoPrincipal, rie
         winRate: WinRate.toFixed(2)+"%",
         capital: datosY[datosY.length-1].toFixed(2),
         return: crecimientoPorcentual+"%",
-        ddh: "-"+ddh+"%"
+        ddh_ci: "-"+ddh+"%"
     }
     
     return datosFinales;
@@ -129,7 +129,7 @@ btn.addEventListener("click", () => {
     let capital = 1000;
     let trades = 100;
     let ratio = 1.5;
-    let riesgoPrincipal = 0.02;
+    let riesgoPrincipal = 0.01;
     let riesgoGanancias = 0.1;
 
     testMonos(monos, capital, trades, ratio, riesgoPrincipal, riesgoGanancias);
