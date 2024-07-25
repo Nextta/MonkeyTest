@@ -5,7 +5,7 @@ async function monos_test(mono_num, capital, numTrades, rr, riesgoPrincipal, rie
         x: ['2020-10-04', '2021-11-04', '2023-12-04'],
         y: [90, 40, 60],
         type: 'scatter',
-        name: "Mono "+mono_num
+        name: "Mono " + mono_num
     };
 
     // Función para generar una fecha futura basada en una fecha inicial
@@ -42,17 +42,17 @@ async function monos_test(mono_num, capital, numTrades, rr, riesgoPrincipal, rie
 
     for (let i = 0; i < vueltas; i++) {
 
-        if(datosY[i] > datosY[0]){
-            if(datosY[i] > datosY[i-1]){
-                riesgo += ((datosY[i] - datosY[i-1]) * porcentaje_riesgo_ganancias);
-            }else{
+        if (datosY[i] > datosY[0]) {
+            if (datosY[i] > datosY[i - 1]) {
+                riesgo += ((datosY[i] - datosY[i - 1]) * porcentaje_riesgo_ganancias);
+            } else {
                 riesgo = datosY[0] * porcentaje_riesgo;
             }
-        }else{
+        } else {
             riesgo = datosY[0] * porcentaje_riesgo;
         }
 
-        trades.push(i+1)
+        trades.push(i + 1)
         let result = generarNumeroAleatorio(0, 1)
 
         if (result === 1) { // Asegúrate de comparar con === para evitar errores de tipo
@@ -69,52 +69,52 @@ async function monos_test(mono_num, capital, numTrades, rr, riesgoPrincipal, rie
     let WinRate = 0;
     let ddh = 0;
     let minimoCapital = datosY[0];
-    for(let i=1; i < datosY.length-1; i++){
-        if(datosY[i] > datosY[i-1]){
+    for (let i = 1; i < datosY.length - 1; i++) {
+        if (datosY[i] > datosY[i - 1]) {
             WinRate += 1;
         }
 
-        if(datosY[i] < minimoCapital){
+        if (datosY[i] < minimoCapital) {
             minimoCapital = datosY[i];
         }
     }
 
     ddh = ((datosY[0] - minimoCapital) / datosY[0]) * 100;
-    let crecimientoPorcentual = (((datosY[datosY.length-1] - datosY[0]) / datosY[0]) * 100);
+    let crecimientoPorcentual = (((datosY[datosY.length - 1] - datosY[0]) / datosY[0]) * 100);
 
     crecimientoPorcentual = crecimientoPorcentual.toFixed(2);
     ddh = ddh.toFixed(2);
     WinRate = ((WinRate / (datosY.length - 1)) * 100)
 
     //console.log(`Mono ${mono_num}(trace ${mono_num-1}) tiene un total de wins de ${WinRate.toFixed(2)}% y ha finalizado con un capital de ${datosY[datosY.length-1].toFixed(2)}( ${crecimientoPorcentual}% ) con un DDH de -${ddh}%`);
-    
+
     let datosFinales = {
         data: mono,
         nombre: `Mono ${mono_num}`,
-        winRate: WinRate.toFixed(2)+"%",
-        capital: datosY[datosY.length-1].toFixed(2),
-        return: crecimientoPorcentual+"%",
-        ddh_ci: "-"+ddh+"%"
+        winRate: WinRate.toFixed(2) + "%",
+        capital: datosY[datosY.length - 1].toFixed(2),
+        return: crecimientoPorcentual + "%",
+        ddh_ci: "-" + ddh + "%"
     }
-    
+
     return datosFinales;
 }
 
-async function testMonos(totalMonos, capital, numTrades, rr, riesgoPrincipal, riesgoGanancias){
+async function testMonos(totalMonos, capital, numTrades, rr, riesgoPrincipal, riesgoGanancias) {
     var monos = [];
     var monosDatos = []
 
     for (let i = 0; i < totalMonos; i++) {
-        let datoMono = await monos_test(i+1, capital, numTrades, rr, riesgoPrincipal, riesgoGanancias)
+        let datoMono = await monos_test(i + 1, capital, numTrades, rr, riesgoPrincipal, riesgoGanancias)
         monos.push(datoMono.data);
         monosDatos.push(datoMono)
     }
 
     var layout = {
-        title: 'Test de los monos',
+        title: 'Test del escopetas',
         showlegend: false
     };
-    
+
     Plotly.newPlot('myDiv', monos, layout, { scrollZoom: true });
 
     console.clear();
@@ -122,16 +122,43 @@ async function testMonos(totalMonos, capital, numTrades, rr, riesgoPrincipal, ri
 }
 
 var btn = document.getElementById("btn");
+var btnSave = document.getElementById("saveBtn");
+var btnConfig = document.getElementById("btnConfig");
+
+var monos = 10;
+var capital = 1000;
+var trades = 100;
+var ratio = 1.5;
+var riesgoPrincipal = 0.01;
+var riesgoGanancias = 0.1;
+
+var n_monos = document.getElementById("monos");
+var n_capital = document.getElementById("capital");
+var n_tardes = document.getElementById("trades");
+var n_ratio = document.getElementById("rr");
+var n_riesgo = document.getElementById("riesgo");
+var n2_riesgo = document.getElementById("riesgo2");
 
 btn.addEventListener("click", () => {
     btn.setAttribute('disabled', "true");
-    let monos = 10;
-    let capital = 1000;
-    let trades = 100;
-    let ratio = 1.5;
-    let riesgoPrincipal = 0.01;
-    let riesgoGanancias = 0.1;
-
     testMonos(monos, capital, trades, ratio, riesgoPrincipal, riesgoGanancias);
     btn.removeAttribute('disabled');
 });
+
+btnSave.addEventListener("click", () => {
+    monos = parseFloat(n_monos.value);
+    capital = parseFloat(n_capital.value);
+    trades = parseFloat(n_tardes.value);
+    ratio = parseFloat(n_ratio.value);
+    riesgoPrincipal = parseFloat(n_riesgo.value);
+    riesgoGanancias = parseFloat(n2_riesgo.value);
+})
+
+btnConfig.addEventListener("click", () => {
+    n_monos.value = monos;
+    n_capital.value = capital;
+    n_tardes.value = trades;
+    n_ratio.value = ratio;
+    n_riesgo.value = riesgoPrincipal;
+    n2_riesgo.value = riesgoGanancias;
+})
